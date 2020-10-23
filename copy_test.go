@@ -26,7 +26,7 @@ func TestNativeRecursiveCopy(t *testing.T) {
 			_ = os.RemoveAll(tmpDir)
 		}()
 
-		if err := Copy(vfs, ".", tmpDir, opts); nil != err {
+		if err := CopyAll(vfs, ".", tmpDir, opts); nil != err {
 			t.Errorf("error: %v", err)
 			return
 		}
@@ -48,7 +48,7 @@ func TestVFSRecursiveCopy(t *testing.T) {
 			_ = os.RemoveAll(tmpDir)
 		}()
 
-		if err := Copy(vfs, ".", tmpDir, opts); nil != err {
+		if err := CopyAll(vfs, ".", tmpDir, opts); nil != err {
 			t.Errorf("copy error: %v", err)
 			return
 		}

@@ -13,8 +13,8 @@ const (
 	tmpPermissionForDirectory = os.FileMode(0755)
 )
 
-// Copy copies src to dest, doesn't matter if src is a directory or a file.
-func Copy(vfs FileSystem, src, dest string, opt ...Options) error {
+// CopyAll copies src to dest, doesn't matter if src is a directory or a file.
+func CopyAll(vfs FileSystem, src, dest string, opt ...Options) error {
 	// FYI: os.Open does a proper lstat
 	f, err := vfs.Open(src)
 	if err != nil {
