@@ -7,6 +7,10 @@ to a native file system destination.
 Works with any file system that implements http.FileSystem,
 including `vfsgen`, `fileb0x`, `gobindata` and most others.
 
+# GoDoc
+
+See <https://pkg.go.dev/git.rootprojects.org/root/vfscopy>.
+
 ## Example: native file system (os)
 
 ```go
