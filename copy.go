@@ -2,6 +2,7 @@ package vfscopy
 
 import (
 	"io"
+	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -33,9 +34,9 @@ func switchboard(
 	vfs FileSystem, src, dest string, f File, info os.FileInfo, opt Options,
 ) error {
 	switch {
-	//case info.Mode()&os.ModeSymlink != 0:
+	case info.Mode()&os.ModeSymlink != 0:
 		// TODO
-		//return onsymlink(vfs, src, dest, opt)
+		return onsymlink(vfs, src, dest, opt)
 	case info.IsDir():
 		return dcopy(vfs, src, dest, f, info, opt)
 	default:
@@ -130,39 +131,40 @@ func dcopy(vfs FileSystem, srcdir, destdir string, d File, info os.FileInfo, opt
 	return
 }
 
-/*
 func onsymlink(vfs FileSystem, src, dest string, opt Options) error {
+	fmt.Println("lstat happy")
 	switch opt.OnSymlink(src) {
 	case Shallow:
 		return lcopy(vfs, src, dest)
 	case Deep:
-		orig, err := filepath.EvalSymlinks(src)
+		orig, err := vfs.EvalSymlinks(src)
 		if err != nil {
 			return err
 		}
-		info, err := os.Lstat(orig)
+		f, err := vfs.Open(orig)
 		if err != nil {
 			return err
 		}
-		return copy(vfs, orig, dest, info, opt)
+		//info, err := os.Lstat(orig)
+		info, err := f.Stat()
+		if err != nil {
+			return err
+		}
+		return copy(vfs, orig, dest, f, info, opt)
 	case Skip:
 		fallthrough
 	default:
 		return nil // do nothing
 	}
 }
-*/
 
 // lcopy is for a symlink,
 // with just creating a new symlink by replicating src symlink.
 func lcopy(vfs FileSystem, src, dest string) error {
-	/*
-	// TODO
-	src, err := os.Readlink(src)
+	src, err := vfs.Readlink(src)
 	if err != nil {
 		return err
 	}
-	*/
 
 	// Create the directories on the path to the dest symlink.
 	if err := os.MkdirAll(filepath.Dir(dest), os.ModePerm); err != nil {
