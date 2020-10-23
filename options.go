@@ -22,12 +22,10 @@ type Options struct {
 type SymlinkAction int
 
 const (
-	// Deep creates hard-copy of contents.
-	Deep SymlinkAction = iota
 	// Shallow creates new symlink to the dest of symlink.
-	Shallow
+	Shallow SymlinkAction = iota
 	// Skip does nothing with symlink.
-	Skip
+	Skip 
 )
 
 // getDefaultOptions provides default options,

@@ -3,22 +3,19 @@ package vfscopy
 import (
 	"os"
 	"io"
+	"io/ioutil"
 	"path/filepath"
 	"path"
 	"strings"
 	"errors"
+	"net/http"
 )
-
-// HTTPFileSystem is copied from http.FileSystem
-type HTTPFileSystem interface {
-    Open(name string) (File, error)
-}
 
 // FileSystem is a Virtual FileSystem with Symlink support
 type FileSystem interface {
     Open(name string) (File, error)
 	Readlink(name string) (string, error)
-	EvalSymlinks(name string) (string, error)
+	//EvalSymlinks(name string) (string, error)
 }
 
 // File is copied from http.File
@@ -30,30 +27,32 @@ type File interface {
     Stat() (os.FileInfo, error)
 }
 
-// VFS is a virtual FileSystem with possible Symlink support
+// VFS is a virtual FileSystem with Symlink support
 type VFS struct {
-	FileSystem HTTPFileSystem
+	FileSystem http.FileSystem
 }
 
 // Open opens a file relative to a virtual filesystem
 func (v *VFS) Open(name string) (File, error) {
-	return v.Open(name)
+	return v.FileSystem.Open(name)
 }
 
 // Readlink returns a "not implemented" error,
 // which is okay because it is never called for http.FileSystem.
 func (v *VFS) Readlink(name string) (string, error) {
-	return "", errors.New("not implemented")
+	f, err := v.FileSystem.Open(name)
+	if nil != err {
+		return "", err
+	}
+	b, err := ioutil.ReadAll(f)
+	if nil != err {
+		return "", err
+	}
+	return string(b), nil
 }
 
-// EvalSymlinks returns the original name,
-// which is okay because it is never called for http.FileSystem.
-func (v *VFS) EvalSymlinks(name string) (string, error) {
-	return name, nil
-}
-
-// NewVFS gives an http.FileSystem faux symlink support
-func NewVFS(httpfs HTTPFileSystem) FileSystem {
+// NewVFS gives an http.FileSystem (real) symlink support
+func NewVFS(httpfs http.FileSystem) FileSystem {
 	return &VFS{ FileSystem: httpfs }
 }
 
@@ -122,6 +121,7 @@ func (d Dir) Readlink(name string) (string, error) {
 	return name, nil
 }
 
+/*
 // EvalSymlinks returns the destination of the named symbolic link.
 func (d Dir) EvalSymlinks(name string) (string, error) {
 	name, err := d.fullName(name)
@@ -134,3 +134,4 @@ func (d Dir) EvalSymlinks(name string) (string, error) {
 	}
 	return name, nil
 }
+*/

@@ -12,3 +12,10 @@ if err := Copy(vfs, ".", "/tmp/dst/"); nil != err {
     fmt.Fprintf(os.Stderr, "couldn't copy vfs: %v\n", err)
 }
 ```
+
+## Test
+
+```bash
+go generate ./...
+go test ./...
+```

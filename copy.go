@@ -2,7 +2,6 @@ package vfscopy
 
 import (
 	"io"
-	"fmt"
 	"os"
 	"path/filepath"
 )
@@ -16,7 +15,7 @@ const (
 
 // Copy copies src to dest, doesn't matter if src is a directory or a file.
 func Copy(vfs FileSystem, src, dest string, opt ...Options) error {
-	//info, err := fs.Lstat(src)
+	// FYI: os.Open does a proper lstat
 	f, err := vfs.Open(src)
 	if err != nil {
 		return err
@@ -132,10 +131,10 @@ func dcopy(vfs FileSystem, srcdir, destdir string, d File, info os.FileInfo, opt
 }
 
 func onsymlink(vfs FileSystem, src, dest string, opt Options) error {
-	fmt.Println("lstat happy")
 	switch opt.OnSymlink(src) {
 	case Shallow:
 		return lcopy(vfs, src, dest)
+	/*
 	case Deep:
 		orig, err := vfs.EvalSymlinks(src)
 		if err != nil {
@@ -151,6 +150,7 @@ func onsymlink(vfs FileSystem, src, dest string, opt Options) error {
 			return err
 		}
 		return copy(vfs, orig, dest, f, info, opt)
+	*/
 	case Skip:
 		fallthrough
 	default:
