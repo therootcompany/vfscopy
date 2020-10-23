@@ -11,7 +11,8 @@ func TestRecursiveCopy(t *testing.T) {
 				return Shallow
 			},
 		}
-		if err := Copy( "./fixtures/src/", "/tmp/dst/", opts,); nil != err {
+		vfs := Dir("./fixtures/src/")
+		if err := Copy(vfs, ".", "/tmp/dst/", opts,); nil != err {
 			t.Fatalf("error: %v", err)
 		}
 	}
