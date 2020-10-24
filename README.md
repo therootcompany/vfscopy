@@ -11,7 +11,9 @@ including `vfsgen`, `fileb0x`, `gobindata` and most others.
 
 See <https://pkg.go.dev/git.rootprojects.org/root/vfscopy>.
 
-## Example: native file system (os)
+## Examples
+
+### (Native) File System
 
 ```go
 httpfs := http.Dir("/tmp/public/")
@@ -22,7 +24,7 @@ if err := vfscopy.CopyAll(vfs, ".", "/tmp/dst/"); nil != err {
 }
 ```
 
-## Example: vfsgen
+### vfsgen (http.FileSystem)
 
 **Note**: `vfsgen` does not support symlinks or file permissions.
 
